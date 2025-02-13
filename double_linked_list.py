@@ -64,16 +64,3 @@ class DLinkedList:
             yield current.val
             current = current.prev
 
-    def get(self, index):
-
-
-
-
-
-
-dlist = DLinkedList()
-dlist.unshift(4)
-dlist.push(5)
-dlist.unshift(3)
-dlist.push(6)
-print(sum(dlist.forward()))
