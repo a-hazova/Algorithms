@@ -5,9 +5,11 @@ class LinkedListNode:
         self.link = next_elem
 
 
-class LinkedList2:
+class LinkedList:
+    _length = 0
     def __init__(self):
         self.head = None
+        self.tail = None
 
     def find(self, value):
         current = self.head
@@ -16,18 +18,16 @@ class LinkedList2:
                 return True
             current = current.link
         return False
-
+    
+    @property
     def length(self):
-        current = self.head
-        count = 0
-        while current is not None:
-            count += 1
-            current = current.link
-        return count
-
+        return self._length
+    
     def insert(self, index, value):
         if self.head is None:
             self.head = LinkedListNode(value, None)
+            self.tail = self.head
+           
         elif index == 0:
             self.unshift(value)
         else:
@@ -36,14 +36,20 @@ class LinkedList2:
                 current = current.link
                 index -= 1
             current.link = LinkedListNode(value, current.link)
+        self._length += 1
 
     def shift(self):
         value = self.head.elem
         self.head = self.head.link
+        self._length -= 1
         return value
 
     def unshift(self, elem):  # алг.сложность O(1)
+        previous = self.head
         self.head = LinkedListNode(elem, self.head)
+        if previous is None:
+            self.tail = self.head
+        self._length += 1
 
     def pop(self):
         current = self.head
@@ -52,20 +58,36 @@ class LinkedList2:
             prev = current
             current = current.link
         prev.link = None
+        self.tail = prev
+        self._length -= 1
         return current.elem
+    
+    def push(self, elem):
+        if self.head is None:
+            self.head = LinkedListNode(elem, None)
+            self.tail = self.head
+        else:
+            self.tail.link = LinkedListNode(elem, None)
+            self.tail = self.tail.link
+        self._length += 1
 
     def delete(self, index):
+        if index >= self.length:
+            raise IndexError("Index out of range")
         if self.head is None:
             return None
         elif index == 0:
             return self.shift()
+        elif index == self.length - 1:
+            return self.pop()
         else:
             current = self.head
-            while current.link.link is not None and index > 1:
+            while current.link is not None and index > 1:
                 current = current.link
                 index -= 1
             value = current.link.elem
             current.link = current.link.link
+            self._length -= 1
             return value
 
     def get(self, index):
@@ -118,11 +140,21 @@ class LinkedList2:
         current = self.head
 
         while current is not None:
-            yield current.value
-            current = self.head.link
+            yield current.elem
+            current = current.link
 
 
-llist = LinkedList2()
+llist = LinkedList()
 llist.unshift(1)
 llist.unshift(2)
 llist.unshift(3)
+llist.pop()
+llist.push(5)
+llist.delete(0)
+
+sum = llist.reduce(func = lambda a, c: a + c)
+
+for i in llist.iterate():
+    print(i) 
+
+print(f'Длина списка: {llist.length}')
